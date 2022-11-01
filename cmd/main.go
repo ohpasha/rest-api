@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	todo "github.com/ohpasha/rest-api"
+	handler "github.com/ohpasha/rest-api/pkg/handler"
 )
 
 func main() {
-	fmt.Print("main")
-
+	handlers := new(handler.Handler)
 	srv := new(todo.Server)
 
-	if error := srv.Run("8000"); error != nil {
+	if error := srv.Run("8000", handlers.InitRouters()); error != nil {
 		log.Fatalf("error: %s", error.Error())
 	}
 }
