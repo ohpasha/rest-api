@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	todo "github.com/ohpasha/rest-api"
 	"github.com/ohpasha/rest-api/pkg/handler"
@@ -15,11 +17,15 @@ func main() {
 	if err := initConfigs(); err != nil {
 		log.Fatalf("can't read config file: %s", err.Error())
 	}
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("can't load .env: %s", err.Error())
+	}
 	db, err := repository.NewPostgresDB(repository.Config{
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
-		Password: viper.GetString("db.password"),
+		Password: os.Getenv("DB_PASSWORD"),
 		DBName:   viper.GetString("db.dbname"),
 		SSLMode:  viper.GetString("db.sslmode"),
 	})
@@ -39,7 +45,7 @@ func main() {
 }
 
 func initConfigs() error {
-	viper.AddConfigPath("../configs")
+	viper.AddConfigPath("./configs")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
 }
