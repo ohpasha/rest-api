@@ -4,11 +4,15 @@ import (
 	"log"
 
 	todo "github.com/ohpasha/rest-api"
-	handler "github.com/ohpasha/rest-api/pkg/handler"
+	"github.com/ohpasha/rest-api/pkg/handler"
+	"github.com/ohpasha/rest-api/pkg/repository"
+	"github.com/ohpasha/rest-api/pkg/service"
 )
 
 func main() {
-	handlers := new(handler.Handler)
+	repos := repository.NewRepository()
+	service := service.NewService(repos)
+	handlers := handler.NewHandler(service)
 	srv := new(todo.Server)
 
 	if error := srv.Run("8000", handlers.InitRouters()); error != nil {
