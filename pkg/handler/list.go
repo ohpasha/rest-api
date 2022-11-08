@@ -91,8 +91,68 @@ func (h *Handler) getListById(c *gin.Context) {
 
 func (h *Handler) updateList(c *gin.Context) {
 
+	userId, ok := getUserId(c)
+
+	if ok != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, "no userId in context")
+
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "id not integer")
+
+		return
+	}
+
+	var input todo.UpdateListInput
+
+	if err := c.BindJSON(&input); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+	}
+
+	err = h.services.Update(userId, id, input)
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
+
 }
 
 func (h *Handler) deleteList(c *gin.Context) {
+	userId, ok := getUserId(c)
 
+	if ok != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, "no userId in context")
+
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "id not integer")
+
+		return
+	}
+
+	err = h.services.TodoList.Delete(userId, id)
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
 }
