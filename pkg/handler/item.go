@@ -101,5 +101,28 @@ func (h *Handler) updateItem(c *gin.Context) {
 }
 
 func (h *Handler) deleteItem(c *gin.Context) {
+	userId, ok := getUserId(c)
 
+	if ok != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, "no userId in context")
+
+		return
+	}
+
+	itemId, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	err = h.services.TodoItem.Delete(userId, itemId)
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+	c.JSON(http.StatusOK, statusResponse{
+		"ok",
+	})
 }
