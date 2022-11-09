@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"strconv"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	todo "github.com/ohpasha/rest-api"
@@ -76,13 +76,46 @@ func (r *TodoItemPostgres) GetById(userId, itemId int) (todo.TodoItem, error) {
 }
 
 func (r *TodoItemPostgres) Delete(userId, itemId int) error {
-	logrus.Infof("==========")
-	logrus.Infof(strconv.Itoa(userId))
-	logrus.Infof(strconv.Itoa(itemId))
 	query := fmt.Sprintf("DELETE FROM %s ti USING %s li, %s ul WHERE ti.id = li.item_id AND li.list_id = ul.list_id AND ul.user_id=$1 AND ti.id=$2", todoItemsTable, listsItemsTable, usersListsTable)
-	logrus.Infof(query)
-	logrus.Infof("====")
 	_, err := r.db.Exec(query, userId, itemId)
+
+	return err
+}
+
+func (r *TodoItemPostgres) Update(userId, itemId int, input todo.UpdateItemInput) error {
+	setValues := make([]string, 0)
+	args := make([]interface{}, 0)
+	argId := 1
+
+	if input.Title != nil {
+		setValues = append(setValues, fmt.Sprintf("title=$%d", argId))
+		args = append(args, *input.Title)
+		argId++
+	}
+
+	if input.Description != nil {
+		setValues = append(setValues, fmt.Sprintf("description=$%d", argId))
+		args = append(args, *input.Description)
+		argId++
+	}
+
+	if input.Done != nil {
+		setValues = append(setValues, fmt.Sprintf("done=$%d", argId))
+		args = append(args, *input.Done)
+		argId++
+	}
+
+	setQuery := strings.Join(setValues, ", ")
+
+	query := fmt.Sprintf("UPDATE %s ti SET %s FROM %s li, %s ul WHERE ti.id = li.item_id AND li.list_id=ul.list_id AND ti.id=$%d AND ul.user_id =$%d",
+		todoItemsTable, setQuery, listsItemsTable, usersListsTable, argId, argId+1)
+
+	args = append(args, itemId, userId)
+
+	logrus.Debugf("update query: %s", setQuery)
+	logrus.Debugf("args: %s", args...)
+
+	_, err := r.db.Exec(query, args...)
 
 	return err
 }

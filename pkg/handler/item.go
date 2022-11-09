@@ -97,6 +97,41 @@ func (h *Handler) getItemById(c *gin.Context) {
 }
 
 func (h *Handler) updateItem(c *gin.Context) {
+	userId, ok := getUserId(c)
+
+	if ok != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, "no userId in context")
+
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "id not integer")
+
+		return
+	}
+
+	var input todo.UpdateItemInput
+
+	if err := c.BindJSON(&input); err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	err = h.services.TodoItem.Update(userId, id, input)
+
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
 
 }
 
@@ -113,6 +148,8 @@ func (h *Handler) deleteItem(c *gin.Context) {
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
 	}
 
 	err = h.services.TodoItem.Delete(userId, itemId)

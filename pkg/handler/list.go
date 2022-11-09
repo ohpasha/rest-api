@@ -90,7 +90,6 @@ func (h *Handler) getListById(c *gin.Context) {
 }
 
 func (h *Handler) updateList(c *gin.Context) {
-
 	userId, ok := getUserId(c)
 
 	if ok != nil {
@@ -107,13 +106,15 @@ func (h *Handler) updateList(c *gin.Context) {
 		return
 	}
 
-	var input todo.UpdateListInput
+	var input todo.UpdateItemInput
 
 	if err := c.BindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+
+		return
 	}
 
-	err = h.services.Update(userId, id, input)
+	err = h.services.TodoItem.Update(userId, id, input)
 
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
