@@ -8,6 +8,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// @Summary      signUp
+// @Description  create account
+// @ID			 signup
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        input   body      todo.User  true  "account info"
+// @Success      200  {integer}  integer 1
+// @Failure      400  {object}  errorResponse
+// @Failure      404  {object}  errorResponse
+// @Failure      500  {object}  errorResponse
+// @Router       /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
 	var input todo.User
 
@@ -37,6 +49,18 @@ type signInInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
+// @Summary      signIn
+// @Description  login
+// @ID			 signin
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        input   body      signInInput  true  "credentials"
+// @Success      200  {integer}  string "token"
+// @Failure      400  {object}  errorResponse
+// @Failure      404  {object}  errorResponse
+// @Failure      500  {object}  errorResponse
+// @Router       /auth/sign-in [post]
 func (h *Handler) signIn(c *gin.Context) {
 	var input signInInput
 

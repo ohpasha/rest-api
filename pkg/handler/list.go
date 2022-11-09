@@ -8,6 +8,19 @@ import (
 	todo "github.com/ohpasha/rest-api"
 )
 
+// @Summary      create todo list
+// @Description  create todo list
+// @ID			 create-list
+// @Tags         lists
+// @Security 	 ApiKeyAuth
+// @Accept       json
+// @Produce      json
+// @Param        input   body      todo.TodoList  true  "list info"
+// @Success      200  {integer}  string "token"
+// @Failure      400  {object}  errorResponse
+// @Failure      404  {object}  errorResponse
+// @Failure      500  {object}  errorResponse
+// @Router       /api/lists [post]
 func (h *Handler) createList(c *gin.Context) {
 	id, ok := getUserId(c)
 

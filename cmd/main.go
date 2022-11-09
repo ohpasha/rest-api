@@ -16,6 +16,19 @@ import (
 	"github.com/spf13/viper"
 )
 
+// @title           Todo REST Api
+// @version         1.0
+// @description     server api for Todo list
+
+// @contact.name   @uhpasha
+// @contact.email  pashok.yoba@gmail.com
+
+// @host      localhost:8000
+// @BasePath  /
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 	if err := initConfigs(); err != nil {
