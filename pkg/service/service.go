@@ -5,6 +5,8 @@ import (
 	"github.com/ohpasha/rest-api/pkg/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Authorization interface {
 	CreateUser(user todo.User) (int, error)
 	GenerateToken(user string, password string) (string, error)

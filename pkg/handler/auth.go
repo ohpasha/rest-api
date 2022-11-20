@@ -24,8 +24,7 @@ func (h *Handler) signUp(c *gin.Context) {
 	var input todo.User
 
 	if err := c.BindJSON(&input); err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
-		logrus.Errorf(err.Error())
+		NewErrorResponse(c, http.StatusBadRequest, "invalid input body")
 
 		return
 	}
