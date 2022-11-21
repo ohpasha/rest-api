@@ -32,6 +32,12 @@ func (h *Handler) userIdentity(c *gin.Context) {
 		return
 	}
 
+	if headerParts[0] != "Bearer" {
+		NewErrorResponse(c, http.StatusUnauthorized, fmt.Sprintf("wrong %s header", AuthHeader))
+
+		return
+	}
+
 	userId, err := h.services.Authorization.ParseToken(headerParts[1])
 
 	if err != nil {
