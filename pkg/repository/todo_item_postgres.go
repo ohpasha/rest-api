@@ -33,7 +33,10 @@ func (r *TodoItemPostgres) Create(listId int, item todo.TodoItem) (int, error) {
 	err = row.Scan(&itemId)
 
 	if err != nil {
-		tx.Rollback()
+		if err := tx.Rollback(); err != nil {
+			return 0, err
+		}
+
 		return 0, err
 	}
 
@@ -42,7 +45,10 @@ func (r *TodoItemPostgres) Create(listId int, item todo.TodoItem) (int, error) {
 	_, err = tx.Exec(createListItemQuery, listId, itemId)
 
 	if err != nil {
-		tx.Rollback()
+		if err := tx.Rollback(); err != nil {
+			return 0, err
+		}
+
 		return 0, err
 	}
 

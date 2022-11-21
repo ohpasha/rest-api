@@ -32,7 +32,10 @@ func (r *TodolistPostgres) Create(userId int, todoList todo.TodoList) (int, erro
 	row := tx.QueryRow(queryList, todoList.Title, todoList.Description)
 
 	if err := row.Scan(&id); err != nil {
-		tx.Rollback()
+		if err := tx.Rollback(); err != nil {
+			return 0, err
+		}
+
 		return 0, err
 	}
 
@@ -41,7 +44,9 @@ func (r *TodolistPostgres) Create(userId int, todoList todo.TodoList) (int, erro
 	_, err = tx.Exec(queryUserList, userId, id)
 
 	if err != nil {
-		tx.Rollback()
+		if err := tx.Rollback(); err != nil {
+			return 0, err
+		}
 
 		return 0, err
 	}

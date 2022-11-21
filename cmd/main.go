@@ -73,11 +73,11 @@ func main() {
 	logrus.Print("server shutting down")
 
 	if err := srv.Stop(context.Background()); err != nil {
-		logrus.Error("error with stopping server; %s", err.Error())
+		logrus.Errorf("error with stopping server; %s", err.Error())
 	}
 
 	if err := db.Close(); err != nil {
-		logrus.Error("error with stopping db; %s", err.Error())
+		logrus.Errorf("error with stopping db; %s", err.Error())
 	}
 
 }
